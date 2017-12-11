@@ -1,0 +1,22 @@
+function send_email_woocommerce_style($email, $subject, $heading, $message) {
+ 
+  $mailer = WC()->mailer();
+  $wrapped_message = $mailer->wrap_message($heading, $message);
+  $wc_email = new WC_Email;
+  $html_message = $wc_email->style_inline($wrapped_message);
+  wp_mail( $email, $subject, $html_message, array('Content-Type: text/html; charset=UTF-8') );
+ 
+}
+
+add_action( 'woocommerce_checkout_order_processed', 'hack_status',  1, 1  );
+function hack_status($order_id) {
+    $order = wc_get_order( $order_id ); 
+    $email = $order->get_billing_email();
+    $first_name = $order->get_shipping_first_name();
+    $last_name = $order->get_shipping_last_name();
+    $order_table = $order->email_order_items_table();
+    $address = $order->get_formatted_billing_address(); 
+    $phone = $order->get_billing_phone();
+    send_email_woocommerce_style('EMAIL', 'Поступил новый заказ', 'Поступил новый заказ','Вам поступил заказ от ' .$first_name.' '.$last_name. ' Детали заказа ниже <br> '. 'Заказ # ' .$order_id.'<br>' .$order_table.'<br> Контакты покупателя <br>'.'Телефон: '.$phone. '<br> Адрес почты: '.$email.'<br>'.$shipping
+);
+}
