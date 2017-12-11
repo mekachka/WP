@@ -1,0 +1,21 @@
+function new_order_go() {
+	register_post_status( 'wc-go', array(
+		'label'                     => _x( 'NAME', 'Order status', 'textdomain' ),
+		'public'                    => true,
+		'exclude_from_search'       => false,
+		'show_in_admin_all_list'    => true,
+		'show_in_admin_status_list' => true,
+		'label_count'               => _n_noop( 'Status name <span class="count">(%s)</span>', 'Status names <span class="count">(%s)</span>', 'textdomain' )
+	) );
+}
+
+add_action( 'init', 'new_order_go' );
+
+// Register in wc_order_statuses.
+function my_new_order_go( $order_statuses ) {
+	$order_statuses['wc-go'] = _x( 'NAME', 'Order status', 'textdomain' );
+
+	return $order_statuses;
+}
+
+add_filter( 'wc_order_statuses', 'my_new_order_go' );
